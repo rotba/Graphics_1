@@ -14,7 +14,7 @@ void main()
 {
 	//vec3 tnorm =  normalize(gl_NormalMatrix * gl_Normal);
 	position1 = position;
-	 uv = texCoord;
+	uv = texCoord;
 	//gl_FrontColor = gl_Color;
 	gl_Position = vec4(position,1);
 	

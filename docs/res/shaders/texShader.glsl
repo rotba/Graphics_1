@@ -15,6 +15,6 @@ in vec3 position1;
 
 void main()
 {
-	gl_FragColor = time *texture(texture1,uv ) + (1 - time)*texture(texture2,uv);	
+	gl_FragColor = time *texture(texture1,uv ) + (1 - 1)*texture(texture2,uv);	
 }
 
