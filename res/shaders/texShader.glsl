@@ -17,13 +17,17 @@ vec4 interpolate_vecs(vec4 src_line, vec4 dst_line);
 vec4 morph_pixel(vec4 orig_lines[MAX_NUM_OF_VECS], vec4 average_vecs[MAX_NUM_OF_VECS]);
 vec2 perpendicular(vec2 pq);
 float calc_dist_point_line(vec2 point, vec4 line, float u, float v);
+vec4[MAX_NUM_OF_VECS] convert_to_normalized(vec4[MAX_NUM_OF_VECS] lines);
 
 
 void main()
 {
 	int num_of_vecs = 20;
 	vec4 average_vecs[] = calc_average_vec();
-	gl_FragColor = time *morph_pixel(src_lines,average_vecs) + (1 - 1)*morph_pixel(src_lines, average_vecs);	
+	vec4 nomred_src_lines[] = convert_to_normalized(src_lines);
+	vec4 nomred_dst_lines[] = convert_to_normalized(dst_lines);
+	vec4 nomred_average_vecs[] = convert_to_normalized(average_vecs);
+	gl_FragColor = time *morph_pixel(normed_src_lines,average_vecs) + (1 - 1)*morph_pixel(normed_src_lines, average_vecs);	
 }
 
 //Calculate the set of the "average" vectors of the current output picture
@@ -32,7 +36,7 @@ vec4[MAX_NUM_OF_VECS] calc_average_vec()
 	int num_of_vecs = sizes[0];
     vec4 ans[MAX_NUM_OF_VECS];
 	for(int i=0; i<num_of_vecs; i++){
-        ans[i] = interpolate_vecs(src_lines[i], dst_lines[i]);
+        ans[i] = interpolate_vecs(normed_src_lines[i], normed_dst_lines[i]);
     }
 	return ans;
 }
@@ -108,4 +112,13 @@ float calc_dist_point_line(vec2 point, vec4 line, float u, float v)
 		ans = distance(point, line.xy);
 	}
 	return ans;
+}
+
+//Transforms lines to be normalized by the size of the frame to be between 0 to 1
+vec4[MAX_NUM_OF_VECS] convert_to_normalized(vec4[MAX_NUM_OF_VECS] lines)
+{
+	vec4 ans[MAX_NUM_OF_VECS];
+	for(int i=0; i<num_of_vecs; i++){
+        ans[i].x = interpolate_vecs(normed_src_lines[i], normed_dst_lines[i]);
+    }
 }
