@@ -16,7 +16,7 @@ vec4[MAX_NUM_OF_VECS] calc_average_vec();
 vec4 interpolate_vecs(vec4 src_line, vec4 dst_line);
 vec4 morph_pixel(vec4 orig_lines[MAX_NUM_OF_VECS], vec4 average_vecs[MAX_NUM_OF_VECS]);
 vec2 perpendicular(vec2 pq);
-
+float calc_dist_point_line(vec2 point, vec4 line, float u, float v);
 
 
 void main()
@@ -65,10 +65,8 @@ vec4 morph_pixel(vec4 orig_lines[MAX_NUM_OF_VECS], vec4 average_vecs[MAX_NUM_OF_
         float v_i=( dot( (uv-p_i) , perpendicular(q_i-p_i) ))/( sqrt( pow(q_i[0]-p_i[0],2) + pow((q_i[1]-p_i[1]),2) ) );
         vec2 x_i_tag = p_i_tag + u_i*(q_i_tag-p_i_tag) + (v_i*perpendicular(q_i_tag-p_i_tag))/(sqrt(pow(q_i[0]-p_i[0],2) + pow((q_i[1]-p_i[1]),2)));
 		vec2 displacment_i = x_i_tag-uv;
-        float dist_i = calc_dist_point_vec(uv, average_vecs[i]); 
-		//problem
+        float dist_i = calc_dist_point_line(uv, average_vecs[i], u_i, v_i); 
         float length_i = distance(average_vecs[i].xy,average_vecs[i].zw);
-		//problem
         float weight_i = pow(pow(length_i,p)/(a+dist_i),b);
         dsum = dsum + displacment_i*weight_i;
         weightsum = weightsum + weight_i;
@@ -96,4 +94,18 @@ vec4 perpendicular_complicated(vec4 pq)
     float x=cos(teta_ans)*hypo+pq[0];
     float y=cos(teta_ans)*hypo+pq[1]; 
     return vec4(pq[0],pq[1],x,y);
+}
+
+//Calculates the shortest distance between point and line
+float calc_dist_point_line(vec2 point, vec4 line, float u, float v)
+{
+	float ans;
+	if(u > 1){
+		ans = distance(point, line.zw);
+	}else if(u >0 && u < 1){
+		ans  = v;
+	}else{
+		ans = distance(point, line.xy);
+	}
+	return ans;
 }
