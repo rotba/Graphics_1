@@ -13,35 +13,34 @@ in vec3 position1;
 #define MAX_NUM_OF_VECS 20
 #define DEBUG false 
 
-vec4[MAX_NUM_OF_VECS] calc_average_vec();
 vec4 interpolate_vecs(vec4 src_line, vec4 dst_line);
 vec2 morph_pixel(vec4 orig_lines[MAX_NUM_OF_VECS], vec4 average_vecs[MAX_NUM_OF_VECS]);
 vec2 perpendicular(vec2 pq);
 float calc_dist_point_line(vec2 point, vec4 line, float u, float v);
 vec4[MAX_NUM_OF_VECS] convert_to_normalized(vec4[MAX_NUM_OF_VECS] lines);
 vec4[MAX_NUM_OF_VECS] flip(vec4[MAX_NUM_OF_VECS] lines);
+vec4[MAX_NUM_OF_VECS] calc_average_vec(vec4[MAX_NUM_OF_VECS] lines_1, vec4[MAX_NUM_OF_VECS] lines_2);
 
 
 void main()
 {
 	vec4 fliped_src_lines[] = flip(src_lines);
 	vec4 fliped_dst_lines[] = flip(dst_lines);
-	vec4 average_vecs[] = calc_average_vec();
-	vec4 normed_src_lines[] = convert_to_normalized(fliped_dst_lines);
+	vec4 normed_src_lines[] = convert_to_normalized(fliped_src_lines);
 	vec4 normed_dst_lines[] = convert_to_normalized(fliped_dst_lines);
-	vec4 normed_average_vecs[] = convert_to_normalized(average_vecs);
-	vec2 x_src=morph_pixel(normed_src_lines,normed_average_vecs);
-	vec2 x_dst=morph_pixel(normed_dst_lines, normed_average_vecs);
-	gl_FragColor = time *texture(texture1,x_dst ) + (1-time)*texture(texture2,x_src);	
+	vec4 average_vecs[] = calc_average_vec(normed_src_lines, normed_dst_lines);
+	vec2 x_src=morph_pixel(normed_src_lines,average_vecs);
+	vec2 x_dst=morph_pixel(normed_dst_lines, average_vecs);
+	gl_FragColor = time *texture(texture2,x_dst ) + (1-time)*texture(texture1,x_src);	
 }
 
 //Calculate the set of the "average" vectors of the current output picture
-vec4[MAX_NUM_OF_VECS] calc_average_vec()
+vec4[MAX_NUM_OF_VECS] calc_average_vec(vec4[MAX_NUM_OF_VECS] lines_1, vec4[MAX_NUM_OF_VECS] lines_2)
 {
 	int num_of_vecs = int(coeffs[0]);
     vec4 ans[MAX_NUM_OF_VECS];
 	for(int i=0; i<num_of_vecs; i++){
-        ans[i] = interpolate_vecs(src_lines[i], dst_lines[i]);
+        ans[i] = interpolate_vecs(lines_1[i], lines_2[i]);
     }
 	return ans;
 }
@@ -50,10 +49,10 @@ vec4[MAX_NUM_OF_VECS] calc_average_vec()
 vec4 interpolate_vecs(vec4 src_line, vec4 dst_line)
 {	
 	vec4 ans;
-    ans[0] = time*src_line[0]+(1-time)*dst_line[0];
-    ans[1] = time*src_line[1]+(1-time)*dst_line[1];
-    ans[2] = time*src_line[2]+(1-time)*dst_line[2];
-    ans[3] = time*src_line[3]+(1-time)*dst_line[3];
+    ans.x = time*src_line.x+(1-time)*dst_line.x;
+    ans.y = time*src_line.y+(1-time)*dst_line.y;
+    ans.z = time*src_line.z+(1-time)*dst_line.z;
+    ans.w = time*src_line.w+(1-time)*dst_line.w;
     return ans;
 }
 //ans is a avg vector src_line and dst_line
@@ -132,10 +131,10 @@ vec4[MAX_NUM_OF_VECS] convert_to_normalized(vec4[MAX_NUM_OF_VECS] lines)
 	int num_of_vecs = int(coeffs[0]);;
 	vec4 ans[MAX_NUM_OF_VECS];
 	for(int i=0; i<num_of_vecs; i++){
-        ans[i][0] = (lines[i][0]-1)/(sizes[2]-1);
-		ans[i][1] = (lines[i][1]-1)/(sizes[3]-1);
-		ans[i][2] = (lines[i][2]-1)/(sizes[2]-1);
-		ans[i][3] = (lines[i][3]-1)/(sizes[3]-1);
+        ans[i].x = (lines[i].x-1)/(float(sizes[2]-1));
+		ans[i].y = (lines[i].y-1)/(float(sizes[3]-1));
+		ans[i].z = (lines[i].z-1)/(float(sizes[2]-1));
+		ans[i].w = (lines[i].w-1)/(float(sizes[3]-1));
     }
 	
 	return ans;
@@ -147,8 +146,10 @@ vec4[MAX_NUM_OF_VECS] flip(vec4[MAX_NUM_OF_VECS] lines)
 	int num_of_vecs = int(coeffs[0]);;
 	vec4 ans[MAX_NUM_OF_VECS];
 	for(int i=0; i<num_of_vecs; i++){
-		ans[i].y = (lines[i][1]*(-1) + sizes[3]);
-		ans[i].w = (lines[i][3]*(-1) + sizes[3]);
+		ans[i].x = lines[i].x;
+		ans[i].y = (float(sizes[3]) - lines[i].y);
+		ans[i].z = lines[i].z;
+		ans[i].w = (float(sizes[3]) - lines[i].w);
     }
 	return ans;
 }
