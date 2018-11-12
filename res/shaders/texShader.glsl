@@ -31,7 +31,7 @@ void main()
 	vec4 average_vecs[] = calc_average_vec(normed_src_lines, normed_dst_lines);
 	vec2 x_src=morph_pixel(normed_src_lines,average_vecs);
 	vec2 x_dst=morph_pixel(normed_dst_lines, average_vecs);
-	gl_FragColor = time *texture(texture2,x_dst ) + (1-time)*texture(texture1,x_src);	
+	gl_FragColor = time*texture(texture2,x_dst ) + (1-time)*texture(texture1,x_src);	
 }
 
 //Calculate the set of the "average" vectors of the current output picture
@@ -49,10 +49,10 @@ vec4[MAX_NUM_OF_VECS] calc_average_vec(vec4[MAX_NUM_OF_VECS] lines_1, vec4[MAX_N
 vec4 interpolate_vecs(vec4 src_line, vec4 dst_line)
 {	
 	vec4 ans;
-    ans.x = time*src_line.x+(1-time)*dst_line.x;
-    ans.y = time*src_line.y+(1-time)*dst_line.y;
-    ans.z = time*src_line.z+(1-time)*dst_line.z;
-    ans.w = time*src_line.w+(1-time)*dst_line.w;
+    ans.x = time*dst_line.x+(1-time)*src_line.x;
+    ans.y = time*dst_line.y+(1-time)*src_line.y;
+    ans.z = time*dst_line.z+(1-time)*src_line.z;
+    ans.w = time*dst_line.w+(1-time)*src_line.w;
     return ans;
 }
 //ans is a avg vector src_line and dst_line

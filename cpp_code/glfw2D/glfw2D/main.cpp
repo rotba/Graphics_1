@@ -31,7 +31,7 @@ int main(int argc,char** argv)
 	while(!glfwWindowShouldClose(display.m_window))
 	{
 		if(t<1)
-			t+=0.00048828125;
+			t+=0.2;
 		else
 			t=0;
 		std::cout << t << std::endl;
