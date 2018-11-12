@@ -1,5 +1,9 @@
-﻿Build started 06/11/2018 15:23:13.
-
-Build succeeded.
-
-Time Elapsed 00:00:00.01
+﻿  mesh.cpp
+  sceneParser.cpp
+c:\users\user\code\c++\grpahics_1\cpp_code\glfw2d\engine2d\sceneparser.h(36): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+  shader.cpp
+  texture.cpp
+c:\users\user\code\c++\grpahics_1\cpp_code\glfw2d\engine2d\texture.cpp(21): warning C4838: conversion from 'int' to 'GLenum' requires a narrowing conversion
+  Generating Code...
+  stb_image.c
+  engine2D.vcxproj -> C:\Users\user\Code\C++\Grpahics_1\cpp_code\glfw2D\Debug\engine2D.lib

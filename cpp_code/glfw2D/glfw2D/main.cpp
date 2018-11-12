@@ -34,6 +34,7 @@ int main(int argc,char** argv)
 			t+=0.00048828125;
 		else
 			t=0;
+		std::cout << t << std::endl;
 		//clear back buffer 
 		display.Clear(0.0f, 0.0f, 0.0f, 1.0f);
 	
